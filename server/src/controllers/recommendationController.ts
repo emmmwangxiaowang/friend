@@ -1,8 +1,12 @@
 import { Request, Response } from 'express';
 import RecommendationService from '../services/recommendationService';
 
+/**
+ * 推荐控制器
+ * 处理用户发现、点赞、打招呼、匹配等推荐相关功能
+ */
 export default class RecommendationController {
-  // Discovery feed for current user
+  /** 获取发现页推荐用户列表 */
   static async getDiscover(req: Request, res: Response) {
     const userId = (req as any).user?.id as string | undefined;
     if (!userId) return res.status(401).json({ error: 'Unauthorized' });
@@ -18,7 +22,7 @@ export default class RecommendationController {
     }
   }
 
-  // Like action (swipe right)
+  /** 点赞操作 - 表示对用户感兴趣 */
   static async like(req: Request, res: Response) {
     const userId = (req as any).user?.id as string | undefined;
     const targetId = req.params.userId as string;
@@ -31,7 +35,7 @@ export default class RecommendationController {
     }
   }
 
-  // Pass action (swipe left)
+  /** 跳过操作 - 不感兴趣 */
   static async pass(req: Request, res: Response) {
     const userId = (req as any).user?.id as string | undefined;
     const targetId = req.params.userId as string;
@@ -44,7 +48,24 @@ export default class RecommendationController {
     }
   }
 
-  // Retrieve mutual matches
+  /**
+   * 打招呼操作
+   * - 记录用户打招呼行为
+   * - 可用于后续推荐算法的商业因子
+   */
+  static async greet(req: Request, res: Response) {
+    const userId = (req as any).user?.id as string | undefined;
+    const targetId = req.params.userId as string;
+    if (!userId || !targetId) return res.status(400).json({ error: 'Bad request' });
+    try {
+      await RecommendationService.greetUser(userId, targetId);
+      return res.json({ success: true, message: '打招呼成功' });
+    } catch {
+      return res.status(500).json({ error: 'Internal' });
+    }
+  }
+
+  /** 获取互相匹配的用户列表 */
   static async getMatches(req: Request, res: Response) {
     const userId = (req as any).user?.id as string | undefined;
     if (!userId) return res.status(401).json({ error: 'Unauthorized' });
@@ -56,7 +77,7 @@ export default class RecommendationController {
     }
   }
 
-  // Force recomputation of recommendations
+  /** 强制刷新推荐列表 */
   static async refresh(req: Request, res: Response) {
     const userId = (req as any).user?.id as string | undefined;
     if (!userId) return res.status(401).json({ error: 'Unauthorized' });

@@ -18,10 +18,19 @@ enum QuestionType {
   MULTIPLE
 }
 
+/** 用户角色枚举 - 用于权限控制 */
+enum UserRole {
+  USER      // 普通用户
+  VIP       // VIP用户（付费用户）
+  MODERATOR // 版主
+  ADMIN     // 管理员
+}
+
 model User {
   id            Int            @id @default(autoincrement())
   email         String         @unique
   passwordHash  String
+  role          UserRole       @default(USER) // 用户角色，用于权限控制
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
 
@@ -36,6 +45,8 @@ model User {
   messages      Message[]
   soulResults   SoulTestResult[]
   groups        UserGroup[]
+  greetings     Greeting[]     @relation("Sender")
+  receivedGreetings Greeting[] @relation("Receiver")
 }
 
 model Profile {
@@ -230,4 +241,15 @@ model SoulTestResult {
   createdAt  DateTime @default(now())
   user       User     @relation(fields: [userId], references: [id])
   soulTest   SoulTest @relation(fields: [soulTestId], references: [id])
+}
+
+/** 打招呼记录 - 用于记录用户互动和推荐算法 */
+model Greeting {
+  id         Int      @id @default(autoincrement())
+  senderId   Int      // 发送者ID
+  receiverId Int      // 接收者ID
+  createdAt  DateTime @default(now())
+  sender     User     @relation("Sender", fields: [senderId], references: [id])
+  receiver   User     @relation("Receiver", fields: [receiverId], references: [id])
+  @@unique([senderId, receiverId])
 }

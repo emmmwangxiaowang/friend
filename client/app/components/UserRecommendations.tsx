@@ -1,7 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
+/** 用户推荐卡片数据结构 */
 type User = {
   id: string;
   name: string;
@@ -12,6 +14,7 @@ type User = {
   interests: string[];
 };
 
+/** 备用数据（API不可用时使用） */
 const mockUsers: User[] = [
   { id: '1', name: '林星', avatar: 'https://i.pravatar.cc/150?img=1', bio: '喜欢探索，热爱旅行', age: 28, distance: '3.2km', interests: ['摄影', '音乐', '文学'] },
   { id: '2', name: '周子安', avatar: 'https://i.pravatar.cc/150?img=2', bio: '爱好跑步和美食', age: 26, distance: '5.8km', interests: ['跑步', '美食'] },
@@ -19,8 +22,39 @@ const mockUsers: User[] = [
   { id: '4', name: '张明', avatar: 'https://i.pravatar.cc/150?img=4', bio: '程序员，喜欢科技', age: 32, distance: '4.5km', interests: ['科技', '游戏'] },
 ];
 
+/**
+ * 用户推荐组件
+ * - 展示系统推荐的用户列表
+ * - 点击卡片跳转到用户主页
+ * - 支持水平滚动浏览
+ */
 export default function UserRecommendations() {
-  const [users] = useState<User[]>(mockUsers);
+  const [users, setUsers] = useState<User[]>([]);
+  const router = useRouter();
+
+  /** 从后端API获取推荐用户 */
+  useEffect(() => {
+    async function fetchRecommendations() {
+      try {
+        const token = localStorage.getItem('authToken');
+        const res = await fetch('/api/discover', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!res.ok) throw new Error('API unavailable');
+        const data = await res.json();
+        setUsers(data.recommendations || mockUsers);
+      } catch {
+        // API不可用时使用备用数据
+        setUsers(mockUsers);
+      }
+    }
+    fetchRecommendations();
+  }, []);
+
+  /** 跳转到用户个人主页 */
+  const handleUserClick = (userId: string) => {
+    router.push(`/profile/${userId}`);
+  };
 
   return (
     <div className="mb-6">
@@ -30,9 +64,10 @@ export default function UserRecommendations() {
       </div>
       <div className="flex overflow-x-auto px-4 space-x-4 pb-2">
         {users.map((user) => (
-          <div
+          <button
             key={user.id}
-            className="flex-shrink-0 w-48 bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow"
+            onClick={() => handleUserClick(user.id)}
+            className="flex-shrink-0 w-48 text-left bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow"
           >
             <div className="relative">
               <img src={user.avatar} alt={user.name} className="w-full h-32 object-cover" />
@@ -54,7 +89,7 @@ export default function UserRecommendations() {
                 ))}
               </div>
             </div>
-          </div>
+          </button>
         ))}
       </div>
     </div>

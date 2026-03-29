@@ -9,9 +9,11 @@ function ensureAuth(req: Request, res: Response, next: NextFunction) {
 
 const router = Router();
 
+/** 推荐相关路由 */
 router.get('/api/discover', ensureAuth, RecommendationController.getDiscover);
 router.post('/api/actions/like/:userId', ensureAuth, RecommendationController.like);
 router.post('/api/actions/pass/:userId', ensureAuth, RecommendationController.pass);
+router.post('/api/actions/greet/:userId', ensureAuth, RecommendationController.greet);
 router.get('/api/matches', ensureAuth, RecommendationController.getMatches);
 router.post('/api/recommendations/refresh', ensureAuth, RecommendationController.refresh);
 

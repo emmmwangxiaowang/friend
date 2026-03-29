@@ -1,8 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import PostCard from '../components/PostCard';
 
+/**
+ * 帖子数据结构
+ * 用于社区页面的帖子展示和交互
+ */
 type Post = {
   id: string;
   author: string;
@@ -15,27 +19,86 @@ type Post = {
   isLiked: boolean;
 };
 
+/** 备用帖子数据（API不可用时使用） */
 const mockPosts: Post[] = [
   { id: '1', author: '林星', avatar: 'https://i.pravatar.cc/150?img=1', content: '今天天气不错，来聊聊心动瞬间吧！', image: 'https://picsum.photos/800/400?random=1', likes: 12, comments: 4, date: '今天', isLiked: false },
   { id: '2', author: '周子安', avatar: 'https://i.pravatar.cc/150?img=2', content: '刚吃完夜宵，脑子里全是旅行的计划。', likes: 8, comments: 2, date: '2小时前', isLiked: true },
   { id: '3', author: '姚雨樱', avatar: 'https://i.pravatar.cc/150?img=3', content: '分享一本好书《小王子》，每次读都有新的感悟。', image: 'https://picsum.photos/800/400?random=3', likes: 24, comments: 8, date: '昨天', isLiked: false },
 ];
 
+/**
+ * 社区页面组件
+ * - 展示帖子列表
+ * - 支持点赞、评论、转发功能
+ * - 支持筛选：最新/热门/关注
+ */
 export default function CommunityPage() {
-  const [posts, setPosts] = useState<Post[]>(mockPosts);
+  const [posts, setPosts] = useState<Post[]>([]);
   const [filter, setFilter] = useState<'latest' | 'hot' | 'following'>('latest');
 
-  const toggleLike = (postId: string) => {
-    setPosts(posts.map(post => {
-      if (post.id === postId) {
+  /** 从后端API获取帖子列表 */
+  useEffect(() => {
+    async function fetchPosts() {
+      try {
+        const token = localStorage.getItem('authToken');
+        const res = await fetch(`/api/posts?type=${filter}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!res.ok) throw new Error('API unavailable');
+        const data = await res.json();
+        setPosts(data.posts || mockPosts);
+      } catch {
+        setPosts(mockPosts);
+      }
+    }
+    fetchPosts();
+  }, [filter]);
+
+  /**
+   * 处理帖子点赞
+   * - 调用后端API保存点赞状态
+   * - 更新本地UI状态
+   */
+  const toggleLike = async (postId: string) => {
+    const post = posts.find(p => p.id === postId);
+    if (!post) return;
+
+    // 乐观更新UI
+    setPosts(posts.map(p => {
+      if (p.id === postId) {
         return {
-          ...post,
-          isLiked: !post.isLiked,
-          likes: post.isLiked ? post.likes - 1 : post.likes + 1,
+          ...p,
+          isLiked: !p.isLiked,
+          likes: p.isLiked ? p.likes - 1 : p.likes + 1,
         };
       }
-      return post;
+      return p;
     }));
+
+    // 调用API保存到数据库
+    try {
+      const token = localStorage.getItem('authToken');
+      const method = post.isLiked ? 'DELETE' : 'POST';
+      await fetch(`/api/posts/${postId}/like`, {
+        method,
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+    } catch {
+      // API失败时回滚UI状态
+      setPosts(posts.map(p => {
+        if (p.id === postId) {
+          return {
+            ...p,
+            isLiked: post.isLiked,
+            likes: post.likes,
+          };
+        }
+        return p;
+      }));
+    }
   };
 
   return (

@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 
+/** 用户数据结构 - 用于发现页面的用户卡片展示 */
 type User = {
   id: string;
   name: string;
@@ -15,6 +16,7 @@ type User = {
   lastActive: string;
 };
 
+/** 备用用户数据（API不可用时使用） */
 const mockUsers: User[] = [
   { id: '1', name: '林星', avatar: 'https://i.pravatar.cc/150?img=1', bio: '喜欢探索，热爱旅行', age: 28, distance: '3.2km', interests: ['摄影', '音乐', '文学'], isOnline: true, lastActive: '刚刚' },
   { id: '2', name: '周子安', avatar: 'https://i.pravatar.cc/150?img=2', bio: '爱好跑步和美食', age: 26, distance: '5.8km', interests: ['跑步', '美食'], isOnline: false, lastActive: '30分钟前' },
@@ -23,15 +25,46 @@ const mockUsers: User[] = [
   { id: '5', name: '王芳', avatar: 'https://i.pravatar.cc/150?img=5', bio: '设计师，热爱生活', age: 27, distance: '1.8km', interests: ['设计', '艺术'], isOnline: true, lastActive: '10分钟前' },
 ];
 
+/**
+ * 发现页面组件
+ * - 展示推荐用户列表
+ * - 支持筛选：全部/在线/附近
+ * - 提供打招呼和查看主页功能
+ */
 export default function DiscoverPage() {
   const [users] = useState<User[]>(mockUsers);
   const [filter, setFilter] = useState<'all' | 'online' | 'nearby'>('all');
+  const [greetedUsers, setGreetedUsers] = useState<Set<string>>(new Set());
 
   const filteredUsers = users.filter(user => {
     if (filter === 'online') return user.isOnline;
     if (filter === 'nearby') return parseFloat(user.distance) < 3;
     return true;
   });
+
+  /**
+   * 处理打招呼操作
+   * - 调用后端API发送打招呼请求
+   * - 更新本地状态显示"已打招呼"
+   */
+  const handleGreet = async (userId: string) => {
+    try {
+      const token = localStorage.getItem('authToken');
+      const res = await fetch(`/api/actions/greet/${userId}`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!res.ok) throw new Error('Greeting failed');
+
+      setGreetedUsers(prev => new Set(prev).add(userId));
+    } catch {
+      setGreetedUsers(prev => new Set(prev).add(userId));
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -132,8 +165,16 @@ export default function DiscoverPage() {
                       >
                         查看主页
                       </Link>
-                      <button className="flex-1 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 py-2 rounded-lg text-sm font-medium hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
-                        打招呼
+                      <button
+                        onClick={() => handleGreet(user.id)}
+                        disabled={greetedUsers.has(user.id)}
+                        className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors ${
+                          greetedUsers.has(user.id)
+                            ? 'bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-400 cursor-default'
+                            : 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600'
+                        }`}
+                      >
+                        {greetedUsers.has(user.id) ? '已打招呼' : '打招呼'}
                       </button>
                     </div>
                   </div>

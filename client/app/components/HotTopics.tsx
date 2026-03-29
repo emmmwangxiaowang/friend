@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 type Topic = {
   id: string;
@@ -19,20 +20,27 @@ const mockTopics: Topic[] = [
 
 export default function HotTopics() {
   const [topics] = useState<Topic[]>(mockTopics);
+  const router = useRouter();
+
+  const handleTopicClick = (topic: Topic) => {
+    // Navigate to topic detail page or community with topic filter
+    router.push(`/community?topic=${encodeURIComponent(topic.title)}`);
+  };
 
   return (
     <div className="mb-6">
       <h3 className="text-lg font-bold mb-3 px-4">🔥 热门话题</h3>
       <div className="flex overflow-x-auto px-4 space-x-3 pb-2">
         {topics.map((topic) => (
-          <div
+          <button
             key={topic.id}
+            onClick={() => handleTopicClick(topic)}
             className="flex-shrink-0 flex items-center space-x-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full px-4 py-2 cursor-pointer hover:shadow-lg transition-shadow"
           >
             <span className="text-lg">{topic.emoji}</span>
             <span className="font-medium">#{topic.title}</span>
             <span className="text-xs opacity-80">{topic.count}讨论</span>
-          </div>
+          </button>
         ))}
       </div>
     </div>

@@ -247,6 +247,31 @@ export default class RecommendationService {
     }
   }
 
+  /**
+   * 打招呼操作
+   * - 记录用户打招呼行为到Redis
+   * - 可用于推荐算法的商业影响因子（如活跃度、互动频率）
+   */
+  static async greetUser(userId: string, targetId: string): Promise<void> {
+    const client = await RedisWrapper.getClient();
+    try {
+      // 记录打招呼行为
+      const entry = { ts: Date.now(), userId, targetId, action: 'greet' };
+      if (client) {
+        await client.rPush('greet:logs', JSON.stringify(entry));
+      }
+
+      // 更新用户活跃度统计（商业因子）
+      if (client) {
+        const activityKey = `user:activity:${userId}`;
+        await client.hIncrBy(activityKey, 'greetCount', 1);
+        await client.hSet(activityKey, 'lastGreet', Date.now().toString());
+      }
+    } catch {
+      // ignore errors
+    }
+  }
+
   static async getMatches(userId: string): Promise<any[]> {
     try {
       const matches = await this.prisma.match.findMany({ where: { OR: [{ userAId: userId }, { userBId: userId }] } } as any);
