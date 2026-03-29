@@ -1,0 +1,84 @@
+openapi: 3.0.0
+info:
+  title: SoulMate API
+  version: 0.1.0
+  description: REST API for SoulMate social/dating app. WebSocket endpoints reserved for real-time features.
+servers:
+  - url: http://localhost:3000/api
+paths:
+  /users:
+    get:
+      summary: Get list of users
+      responses:
+        '200':
+          description: OK
+  /users/{id}:
+    get:
+      summary: Get user by id
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+  /posts:
+    get:
+      summary: List posts
+      responses:
+        '200':
+          description: OK
+  /posts/{id}/comments:
+    get:
+      summary: List comments for a post
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        email:
+          type: string
+        displayName:
+          type: string
+    Post:
+      type: object
+      properties:
+        id:
+          type: integer
+        content:
+          type: string
+        authorId:
+          type: integer
+    Comment:
+      type: object
+      properties:
+        id:
+          type: integer
+        postId:
+          type: integer
+        authorId:
+          type: integer
+        content:
+          type: string
+    SoulTest:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        description:
+          type: string

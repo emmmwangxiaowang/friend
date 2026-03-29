@@ -1,0 +1,14 @@
+# SoulMate 使用现有 Docker 容器
+# 以下服务已在运行中，无需启动新容器
+
+services:
+  # PostgreSQL - 使用现有的 pgsql_dev (端口 5432)
+  # postgres_prod (端口 5434) 或 postgres_uat (端口 5433) 可替换
+  postgres:
+    container_name: pgsql_dev
+    external: true
+
+  # Redis - 使用现有的 redis (端口 6379)
+  redis:
+    container_name: redis
+    external: true
