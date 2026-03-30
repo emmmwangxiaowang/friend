@@ -1,0 +1,4 @@
+- No backend integration for this phase; data is mocked locally.
+- Potential improvement: add widget tests for PostCard interactions.
+- Consider adding persistence for follows and likes in future phase.
+- Completed: Phase 8 implementation; no blockers remaining for this phase.

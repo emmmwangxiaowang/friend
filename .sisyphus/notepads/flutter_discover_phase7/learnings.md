@@ -1,0 +1,4 @@
+- Diving into Flutter UI for Discover page phase 7
+- Implemented modular widgets: UserCard, FilterBar, GreetButton
+- Used mock data to simulate list and interactions
+- Plan to extend with navigation to user profiles and toast feedback

@@ -1,0 +1,4 @@
+- Plan: Implement JWT-based authentication in a Spring Boot module (Phase 2).
+- Achievements: Added User entity, repository, DTOs, JwtUtil, JwtAuthenticationFilter, CustomUserDetailsService, AuthController, SecurityConfig, main app, and config files.
+- Verification: Outline of dependencies and configuration prepared; compile/run steps documented in README.
+- Next steps: Add tests, refine error handling, and expand user details/roles if needed.

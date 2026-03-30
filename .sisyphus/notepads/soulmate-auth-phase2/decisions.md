@@ -1,0 +1,3 @@
+- Decision: Adopt stateless JWT approach with access and refresh tokens signed by a shared secret. No token persistence in DB for phase 2 to keep it simple.
+- Rationale: Simplicity, reduced DB coupling, easy to validate on each request.
+- Decision: Use Spring Security with BCryptPasswordEncoder; expose /api/auth/** publicly and protect other endpoints.

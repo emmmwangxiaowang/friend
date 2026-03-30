@@ -1,0 +1,3 @@
+- Decision: Use simple local state for likes, follows, and comments to satisfy no-backend constraint.
+- Decision: Componentized UI with PostCard, LikeButton, CommentButton, PostFilterBar for reusability.
+- Decision: Mock data uses pravatar avatars and generated timestamps for realism.

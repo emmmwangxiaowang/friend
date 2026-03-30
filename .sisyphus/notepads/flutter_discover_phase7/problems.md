@@ -1,0 +1,3 @@
+- Ensure UI scales on small/mobile screens
+- Validate that filtering updates the list promptly
+- Confirm that greeting action provides user feedback
