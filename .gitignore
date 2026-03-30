@@ -39,3 +39,13 @@ coverage/
 *.tgz
 .yarn-integrity
 .cache/
+ 
+# Flutter 
+.dart_tool/  
+.packages  
+pubspec.lock  
+.flutter-plugins  
+.flutter-plugins-dependencies 
+**/.dart_tool/  
+**/.packages  
+**/pubspec.lock 
