@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import '../models/user.dart';
 
-enum FilterOption { all, online, nearby }
+enum FilterOption { all, online, nearby, latest, hot, following }
 
 class FilterBar extends StatelessWidget {
   final FilterOption selected;
@@ -11,19 +10,32 @@ class FilterBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Determine which options to show based on context
+    final isCommunity = [FilterOption.latest, FilterOption.hot, FilterOption.following].contains(selected);
+    
+    final options = isCommunity 
+      ? [FilterOption.latest, FilterOption.hot, FilterOption.following]
+      : [FilterOption.all, FilterOption.online, FilterOption.nearby];
+    
+    final labels = isCommunity 
+      ? ['最新', '热门', '关注']
+      : ['全部', '在线', '附近'];
+    
     return Padding(
       padding: const EdgeInsets.all(12.0),
-      child: ToggleButtons(
-        isSelected: [selected == FilterOption.all, selected == FilterOption.online, selected == FilterOption.nearby],
-        onPressed: (index) {
-          onSelected(FilterOption.values[index]);
-        },
-        borderRadius: BorderRadius.circular(8.0),
-        children: const [
-          Padding(padding: EdgeInsets.symmetric(horizontal: 12.0), child: Text('全部')),
-          Padding(padding: EdgeInsets.symmetric(horizontal: 12.0), child: Text('在线')),
-          Padding(padding: EdgeInsets.symmetric(horizontal: 12.0), child: Text('附近')),
-        ],
+      child: Wrap(
+        spacing: 8,
+        children: List.generate(options.length, (index) {
+          final option = options[index];
+          final isSelected = selected == option;
+          return ChoiceChip(
+            label: Text(labels[index]),
+            selected: isSelected,
+            onSelected: (selected) {
+              if (selected) onSelected(option);
+            },
+          );
+        }),
       ),
     );
   }
