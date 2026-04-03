@@ -14,14 +14,7 @@ class DiscoverScreen extends StatefulWidget {
 class _DiscoverScreenState extends State<DiscoverScreen> {
   FilterOption _filter = FilterOption.all;
 
-  final List<User> _users = [
-    User(id: 'u1', name: 'Alex Chen', isOnline: true, distanceKm: 1.2),
-    User(id: 'u2', name: 'Lina Zhao', isOnline: false, distanceKm: 4.5),
-    User(id: 'u3', name: 'Kai Nakamura', isOnline: true, distanceKm: 0.8),
-    User(id: 'u4', name: 'Maria Garcia', isOnline: true, distanceKm: 2.3),
-    User(id: 'u5', name: 'David Kim', isOnline: false, distanceKm: 9.1),
-    User(id: 'u6', name: 'Priya Singh', isOnline: true, distanceKm: 3.0),
-  ];
+  final List<User> _users = mockUsers;
 
   List<User> get _filtered => _applyFilter(_users, _filter);
 
@@ -30,8 +23,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
       case FilterOption.online:
         return users.where((u) => u.isOnline).toList();
       case FilterOption.nearby:
-        // For simplicity, consider nearby as distance <= 3.0 km
-        return users.where((u) => u.distanceKm <= 3.0).toList();
+        return users;
       case FilterOption.all:
       default:
         return users;
@@ -39,7 +31,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
   }
 
   void _onGreet(User user) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('已向 ${user.name} 打招呼')));
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('已向 \ 打招呼')));
   }
 
   void _onOpenProfile(User user) {
@@ -87,7 +79,7 @@ class UserProfileScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: Text(user.name)),
       body: Center(
-        child: Text('这是 ${user.name} 的个人主页 (模拟)'),
+        child: Text('这是 \ 的个人主页 (模拟)'),
       ),
     );
   }

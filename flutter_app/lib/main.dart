@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'screens/discover_screen.dart';
+import 'config/router.dart';
 
 void main() {
   runApp(const SoulMateApp());
@@ -10,10 +10,17 @@ class SoulMateApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'SoulMate Discover',
-      theme: ThemeData(useMaterial3: true),
-      home: const DiscoverScreen(),
+    return MaterialApp.router(
+      title: 'SoulMate',
+      theme: ThemeData(
+        useMaterial3: true,
+        primarySwatch: Colors.purple,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFF7C3AED),
+          brightness: Brightness.light,
+        ),
+      ),
+      routerConfig: router,
     );
   }
 }

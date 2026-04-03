@@ -19,7 +19,7 @@ class UserCard extends StatelessWidget {
           child: Text(user.name.isNotEmpty ? user.name[0] : '?'),
         ),
         title: Text(user.name, style: const TextStyle(fontWeight: FontWeight.w600)),
-        subtitle: Text('${user.distanceKm.toStringAsFixed(1)} km • ${user.isOnline ? '在线' : '离线'}'),
+        subtitle: Text('\ • '),
         trailing: GreetButton(onPressed: onGreet, label: '打招呼'),
         onTap: onTap,
       ),

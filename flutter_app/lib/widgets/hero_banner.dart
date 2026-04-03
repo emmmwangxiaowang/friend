@@ -22,7 +22,7 @@ class HeroBanner extends StatelessWidget {
           alignment: Alignment.bottomLeft,
           child: Text(
             'Welcome to Flutter Home Skeleton',
-            style: Theme.of(context).textTheme.headline6?.copyWith(color: Colors.white),
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Colors.white),
           ),
         ),
       ),
