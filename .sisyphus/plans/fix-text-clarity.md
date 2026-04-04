@@ -53,6 +53,26 @@ Phase 1: Design
 
 ## Parallel Execution Waves
 - Wave 1: Audit tasks (identify where changes needed)
+- Web Testing (Flutter Web)
+  - Enable web: `flutter config --enable-web`
+  - Build web: `flutter build web`
+  - Run: `flutter run -d chrome` or `flutter run -d web-server`
+  - Validate: text readability on web across viewports; test with browser zoom
+  - Capture baseline screenshots
+  - Acceptance: web rendering matches desktop typography; text scales properly
+- Linux font readiness (local desktop)
+  - Check system fonts: ensure fonts-noto-cjk and fonts-noto-sans are installed
+  - If missing, install via: `sudo apt-get update` && `sudo apt-get install -y fonts-noto-cjk fonts-noto-sans`
+  - Verify with: `fc-list | grep -E "Noto|文泉|sans"`
+  - Confirm pubspec.yaml fonts declaration or plan to fallback to system font
+  - Validate by running a quick desktop session: `flutter run -d linux` (if environment allows) or inspect UI after rebuild
+- Web Testing (Flutter Web)
+  - Enable web: `flutter config --enable-web`
+  - Build web: `flutter build web`
+  - Run: `flutter run -d chrome` or `flutter run -d web-server`
+  - Validate: text readability on web across viewports; test with browser zoom
+  - Capture baseline screenshots
+  - Acceptance: web rendering matches desktop typography; text scales properly
 - Wave 2: Implement typography token set and ThemeData integration
 - Wave 3: Apply tokens to widgets and run tests
 
