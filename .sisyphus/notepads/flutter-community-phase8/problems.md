@@ -1,2 +1,0 @@
-- Potential UI overflow on small screens; may need responsive tweaks.
-- Ensure hot reload updates post state consistently when filters change.

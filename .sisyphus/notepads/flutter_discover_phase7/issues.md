@@ -1,3 +1,0 @@
-- No backend integration yet; data is mocked locally
-- Potential UI adjustments for accessibility and responsive design
-- Need to verify navigation to user profiles works on all screens

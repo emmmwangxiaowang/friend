@@ -1,3 +1,0 @@
-- Decision: Use Material 3 theming and ToggleButtons for FilterBar
-- Decision: Keep data in-memory for Phase 7; no backend calls
-- Decision: UserCard exposes onTap (open profile) and onGreet (send greeting)

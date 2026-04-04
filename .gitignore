@@ -2,12 +2,17 @@
 node_modules/
 **/node_modules/
 node-v18.20.2-linux-x64/
+archived/
+package-lock.json
+yarn.lock
 
 # Build outputs
 .next/
 dist/
 build/
 **/.next/
+**/dist/
+**/build/
 
 # Environment files
 .env
